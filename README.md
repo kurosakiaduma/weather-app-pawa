@@ -23,7 +23,7 @@ The project is divided into two main components:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/kurosakiaduma/weather-app-pawa
 cd weather-app/backend
 ```
 
