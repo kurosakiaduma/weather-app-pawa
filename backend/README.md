@@ -1,61 +1,278 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Weather App Setup and Deployment Guide
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This document provides comprehensive instructions for setting up, configuring, and deploying the Weather App project, which consists of a NextJS frontend and Laravel backend.
 
-## About Laravel
+## Prerequisites
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Node.js 16.x or higher
+- npm or yarn
+- PHP 8.1 or higher
+- Composer
+- Git
+- A free OpenWeatherMap API key (sign up at [OpenWeatherMap](https://openweathermap.org/api))
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Project Structure
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The project is divided into two main components:
 
-## Learning Laravel
+1. **Frontend**: NextJS application with TypeScript and Tailwind CSS
+2. **Backend**: Laravel API application
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Setting Up the Backend (Laravel)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 1. Clone the Repository
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+git clone https://github.com/kurosakiaduma/weather-app-pawa
+cd weather-app/backend
+```
 
-## Laravel Sponsors
+### 2. Install Dependencies
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer install
+```
 
-### Premium Partners
+### 3. Configure Environment Variables
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+# Copy the example env file
+cp .env.example .env
 
-## Contributing
+# Generate application key
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Edit the `.env` file and set your OpenWeatherMap API key:
 
-## Code of Conduct
+```
+OPENWEATHERMAP_API_KEY=your_api_key_here
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Start the Development Server
 
-## Security Vulnerabilities
+```bash
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+This will start the Laravel development server on http://localhost:8000.
 
-## License
+## Setting Up the Frontend (NextJS)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 1. Navigate to the Frontend Directory
+
+If you're in the project root:
+
+```bash
+cd ../frontend
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env.local` file in the frontend directory:
+
+```
+BACKEND_API_URL=http://localhost:8000
+```
+
+### 4. Start the Development Server
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+This will start the NextJS development server on http://localhost:3000.
+
+## Testing the Application
+
+1. Ensure both the backend and frontend servers are running
+2. Open http://localhost:3000 in your browser
+3. You should see the Weather App interface
+4. Search for a city to test the functionality
+
+## Deployment
+
+### Backend Deployment
+
+#### Preparing for Deployment
+
+1. Update the `.env` file for production:
+   ```
+   APP_ENV=production
+   APP_DEBUG=false
+   ```
+
+2. Optimize Laravel for production:
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   ```
+
+#### Deployment Options
+
+**Option 1: Shared Hosting**
+
+1. Upload the project files to your server (excluding the `node_modules` and `vendor` directories)
+2. Run `composer install --optimize-autoloader --no-dev` on the server
+3. Set up a `.env` file with your production settings
+4. Configure your web server (Apache/Nginx) to point to the `public` directory
+
+**Option 2: Laravel Forge**
+
+Laravel Forge provides a simplified deployment process:
+
+1. Connect your server to Forge
+2. Set up a new site and link your repository
+3. Configure environment variables
+4. Deploy the application
+
+**Option 3: Docker**
+
+If using Docker:
+
+1. Build the Laravel Docker image:
+   ```bash
+   docker build -t weather-app-backend .
+   ```
+
+2. Run the container:
+   ```bash
+   docker run -p 8000:80 -e "OPENWEATHERMAP_API_KEY=your_api_key_here" weather-app-backend
+   ```
+
+### Frontend Deployment
+
+#### Preparing for Deployment
+
+1. Build the NextJS application:
+   ```bash
+   npm run build
+   # or
+   yarn build
+   ```
+
+2. This creates an optimized production build in the `.next` directory.
+
+#### Deployment Options
+
+**Option 1: Vercel (Recommended for NextJS)**
+
+1. Install the Vercel CLI:
+   ```bash
+   npm install -g vercel
+   ```
+
+2. Deploy the application:
+   ```bash
+   vercel
+   ```
+
+3. Follow the prompts to complete the deployment
+
+**Option 2: Static Export**
+
+For static hosting platforms (Netlify, GitHub Pages, etc.):
+
+1. Add the following to `next.config.js`:
+   ```js
+   module.exports = {
+     // other configs...
+     output: 'export',
+   }
+   ```
+
+2. Build the static export:
+   ```bash
+   npm run build
+   ```
+
+3. The static files will be in the `out` directory, which can be deployed to any static hosting service.
+
+**Option 3: Docker**
+
+If using Docker:
+
+1. Build the NextJS Docker image:
+   ```bash
+   docker build -t weather-app-frontend .
+   ```
+
+2. Run the container:
+   ```bash
+   docker run -p 3000:3000 -e "BACKEND_API_URL=https://your-backend-url.com" weather-app-frontend
+   ```
+
+## Connecting Frontend to Backend in Production
+
+When deploying to production, update the `.env.local` file in the frontend project with your production backend URL:
+
+```
+BACKEND_API_URL=https://your-backend-api-url.com
+```
+
+Or set this as an environment variable in your hosting platform.
+
+## Troubleshooting
+
+### Common Backend Issues
+
+1. **OpenWeatherMap API key not working**
+   - Verify the key is correct
+   - Check if you've exceeded the API limits
+   - Ensure the API endpoints being used are available on your plan
+
+2. **CORS errors**
+   - Update your Laravel CORS configuration in `config/cors.php`
+   - Ensure your frontend domain is in the allowed origins
+
+### Common Frontend Issues
+
+1. **API connection errors**
+   - Check that the `BACKEND_API_URL` is set correctly
+   - Verify that the backend is running and accessible
+   - Check browser console for specific error messages
+
+2. **Build errors**
+   - Clear the `.next` directory and node_modules: `rm -rf .next node_modules`
+   - Reinstall dependencies: `npm install`
+   - Try building again: `npm run build`
+
+## Maintenance and Updates
+
+1. **Keeping dependencies updated**
+
+   For backend:
+   ```bash
+   composer update
+   ```
+
+   For frontend:
+   ```bash
+   npm update
+   # or
+   yarn upgrade
+   ```
+
+2. **Monitoring**
+   - Set up logging in Laravel (consider using a service like Papertrail)
+   - Use an error tracking service (like Sentry) for frontend errors
+
+3. **Backup**
+   - Regularly backup your environment configuration
+
+## Additional Resources
+
+- [Laravel Documentation](https://laravel.com/docs)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [OpenWeatherMap API Documentation](https://openweathermap.org/api)
