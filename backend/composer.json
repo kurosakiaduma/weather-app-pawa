@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Backend API for Weather app assessment project.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
