@@ -25,8 +25,11 @@ class WeatherService
         $this->apiKey = config('services.openweathermap.key');
 
         if (empty($this->apiKey)) {
+            Log::error('OpenWeatherMap API key is not set');
             throw new \RuntimeException('OpenWeatherMap API key is not set.');
         }
+
+        Log::info('WeatherService initialized with API key');
     }
 
     /**
@@ -38,14 +41,26 @@ class WeatherService
     public function getCoordinates(string $city): ?array
     {
         try {
-            $response = Http::get($this->baseUrl . 'geo/1.0/direct', [
+            $url = $this->baseUrl . 'geo/1.0/direct';
+            Log::info("Making Geocoding API request", [
+                'url' => $url,
+                'city' => $city
+            ]);
+
+            $response = Http::get($url, [
                 'q' => $city,
                 'limit' => 1,
                 'appid' => $this->apiKey,
             ]);
 
+            Log::info("Geocoding API response received", [
+                'status' => $response->status(),
+                'headers' => $response->headers(),
+            ]);
+
             if (!$response->successful() || empty($response->json())) {
-                Log::error('Failed to get coordinates for city: ' . $city, [
+                Log::error('Failed to get coordinates for city', [
+                    'city' => $city,
                     'status' => $response->status(),
                     'response' => $response->body(),
                 ]);
@@ -53,6 +68,12 @@ class WeatherService
             }
 
             $data = $response->json()[0];
+            Log::info("Coordinates found for city", [
+                'city' => $city,
+                'lat' => $data['lat'],
+                'lon' => $data['lon'],
+                'country' => $data['country'] ?? 'Unknown'
+            ]);
 
             return [
                 'lat' => $data['lat'],
@@ -60,7 +81,12 @@ class WeatherService
                 'country' => $data['country'] ?? 'Unknown',
             ];
         } catch (\Exception $e) {
-            Log::error('Exception while getting coordinates: ' . $e->getMessage());
+            Log::error('Exception while getting coordinates', [
+                'city' => $city,
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return null;
         }
     }
@@ -77,7 +103,14 @@ class WeatherService
     public function getWeatherByCoordinates(float $lat, float $lon, string $cityName, string $countryCode): array
     {
         try {
-            $response = Http::get($this->baseUrl . 'data/3.0/onecall', [
+            $url = $this->baseUrl . 'data/3.0/onecall';
+            Log::info("Making Weather API request", [
+                'url' => $url,
+                'lat' => $lat,
+                'lon' => $lon
+            ]);
+
+            $response = Http::get($url, [
                 'lat' => $lat,
                 'lon' => $lon,
                 'exclude' => 'minutely,hourly,alerts',
@@ -85,8 +118,16 @@ class WeatherService
                 'appid' => $this->apiKey,
             ]);
 
+            Log::info("Weather API response received", [
+                'status' => $response->status(),
+                'headers' => $response->headers(),
+            ]);
+
             if (!$response->successful()) {
                 Log::error('Failed to get weather data', [
+                    'city' => $cityName,
+                    'lat' => $lat,
+                    'lon' => $lon,
                     'status' => $response->status(),
                     'response' => $response->body(),
                 ]);
@@ -99,9 +140,23 @@ class WeatherService
             $weatherData['city'] = $cityName;
             $weatherData['country'] = $countryCode;
 
+            Log::info("Weather data processed successfully", [
+                'city' => $cityName,
+                'country' => $countryCode,
+                'temp' => $weatherData['current']['temp'] ?? 'N/A',
+                'weather' => $weatherData['current']['weather'][0]['description'] ?? 'N/A',
+            ]);
+
             return $weatherData;
         } catch (\Exception $e) {
-            Log::error('Exception while getting weather data: ' . $e->getMessage());
+            Log::error('Exception while getting weather data', [
+                'city' => $cityName,
+                'lat' => $lat,
+                'lon' => $lon,
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             throw $e;
         }
     }
