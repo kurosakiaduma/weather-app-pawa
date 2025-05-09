@@ -23,7 +23,7 @@ const ForecastDay: React.FC<ForecastDayProps> = ({
 }) => {
   return (
     <div className="forecast-day">
-      <p className="font-medium text-gray-300 mb-1">{getDayName(timestamp)}</p>
+      <p className="font-medium mb-1">{getDayName(timestamp)}</p>
       <WeatherIcon iconCode={iconCode} description={description} size="sm" />
       <p className="text-lg font-bold mt-2">{formatTemperature(temperature, unit)}</p>
     </div>
