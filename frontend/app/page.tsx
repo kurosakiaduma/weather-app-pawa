@@ -75,27 +75,27 @@ const Home = () => {
         )}
         
         {weatherData && (
-          <div className="space-y-6">
-            <CurrentWeather
-              temperature={weatherData.current.temp}
-              description={weatherData.current.weather[0].description}
-              iconCode={weatherData.current.weather[0].icon}
-              city={weatherData.city}
-              country={weatherData.country}
-              timestamp={weatherData.current.dt}
-              unit={unit}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-1">
+              <CurrentWeather
+                temperature={weatherData.current.temp}
+                description={weatherData.current.weather[0].description}
+                iconCode={weatherData.current.weather[0].icon}
+                city={weatherData.city}
+                country={weatherData.country}
+                timestamp={weatherData.current.dt}
+                unit={unit}
+              />
+            </div>
             
-            <div>
+            <div className="md:col-span-2">
               <h2 className="text-xl font-semibold mb-4">3-Day Forecast</h2>
               <WeatherForecast 
                 forecast={weatherData.daily.slice(1, 4)} 
                 unit={unit}
               />
-            </div>
-            
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Weather Details</h2>
+              
+              <h2 className="text-xl font-semibold mt-6 mb-4">Weather Details</h2>
               <WeatherStats
                 windSpeed={weatherData.current.wind_speed}
                 humidity={weatherData.current.humidity}

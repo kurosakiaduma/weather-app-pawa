@@ -13,7 +13,26 @@
   --border-radius: 0.75rem;
   --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --font-comfortaa: 'Comfortaa', system-ui, sans-serif;
+  
+  /* Theme-specific colors */
+  --bg-main: #111;
+  --bg-card: #222;
+  --text-main: #ffffff;
+  --text-secondary: #cccccc;
+  --border-color: #333;
+  --highlight-color: var(--primary-color);
 }
+
+:root.light-mode {
+  --bg-main: #f0f2f5;
+  --bg-card: #ffffff;
+  --text-main: #333333;
+  --text-secondary: #666666;
+  --border-color: #e1e4e8;
+  --highlight-color: var(--primary-color);
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
 
 @layer base {
   body {
