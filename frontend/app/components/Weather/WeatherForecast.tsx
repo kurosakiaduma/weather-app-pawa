@@ -15,7 +15,7 @@ interface WeatherForecastProps {
  */
 const WeatherForecast: React.FC<WeatherForecastProps> = ({ forecast, unit }) => {
   return (
-    <div className="forecast-container">
+    <div className="grid grid-cols-3 gap-4">
       {forecast.slice(0, 3).map((day) => (
         <ForecastDay
           key={day.dt}
