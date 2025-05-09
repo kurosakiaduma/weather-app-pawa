@@ -76,6 +76,18 @@
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
   }
 
+  .forecast-day {
+    @apply bg-card-bg rounded-lg shadow transition-all duration-300;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    justify-items: center;
+  }
+
+  .forecast-day:hover {
+    @apply transform -translate-y-1 shadow-lg;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+  }
   .weather-icon {
     @apply mb-2;
   }
