@@ -99,6 +99,7 @@ const Home = () => {
               <WeatherStats
                 windSpeed={weatherData.current.wind_speed}
                 humidity={weatherData.current.humidity}
+                windDeg={weatherData.current.wind_deg}
               />
             </div>
           </div>
