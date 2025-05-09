@@ -5,22 +5,28 @@
  * @returns Converted temperature value
  */
 export const convertTemperature = (temp: number, to: 'C' | 'F'): number => {
-    if (to === 'C') {
-      // Convert from Fahrenheit to Celsius
-      return (temp - 32) * (5 / 9);
-    } else {
-      // Convert from Celsius to Fahrenheit
-      return (temp * 9) / 5 + 32;
-    }
-  };
+  if (to === 'C') {
+    // If temperature is already in Celsius, return as is
+    return temp;
+  } else {
+    // Convert from Celsius to Fahrenheit
+    return (temp * 9) / 5 + 32;
+  }
+};
+
+/**
+ * Format temperature with units
+ * @param temp Temperature value (in Celsius)
+ * @param unit Display unit ('C' or 'F')
+ * @returns Formatted temperature string with units
+ */
+export const formatTemperature = (temp: number, unit: 'C' | 'F'): string => {
+  // First convert the temperature if needed
+  const convertedTemp = unit === 'F' ? convertTemperature(temp, 'F') : temp;
   
-  /**
-   * Format temperature with units
-   * @param temp Temperature value
-   * @param unit Unit ('C' or 'F')
-   * @returns Formatted temperature string with units
-   */
-  export const formatTemperature = (temp: number, unit: 'C' | 'F'): string => {
-    const roundedTemp = Math.round(temp);
-    return `${roundedTemp}°${unit}`;
-  };
+  // Then round it
+  const roundedTemp = Math.round(convertedTemp);
+  
+  // Return formatted string
+  return `${roundedTemp}°${unit}`;
+};
