@@ -26,14 +26,12 @@ const CurrentWeather: React.FC<CurrentWeatherProps> = ({
   unit,
 }) => {
   return (
-    <div className="weather-card current-weather">
+    <div className="weather-card flex flex-col items-center justify-center p-6 text-center">
       <WeatherIcon iconCode={iconCode} description={description} size="lg" />
-      <h1 className="text-4xl font-bold mt-2">{formatTemperature(temperature, unit)}</h1>
-      <p className="text-xl capitalize text-gray-300 mt-1">{description}</p>
-      <div className="mt-4 text-center">
-        <p className="text-gray-300">{formatDate(timestamp)}</p>
-        <p className="text-lg mt-1">{city}, {country}</p>
-      </div>
+      <h1 className="text-6xl font-bold mt-3 mb-2">{formatTemperature(temperature, unit)}</h1>
+      <p className="text-xl capitalize text-gray-300 mb-4">{description}</p>
+      <p className="text-gray-400 mb-1">{formatDate(timestamp)}</p>
+      <p className="text-lg font-medium">{city}, {country}</p>
     </div>
   );
 };
