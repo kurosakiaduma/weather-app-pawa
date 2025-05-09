@@ -10,20 +10,22 @@ interface TemperatureToggleProps {
  */
 const TemperatureToggle: React.FC<TemperatureToggleProps> = ({ unit, onChange }) => {
     return (
-        <div className="temperature-toggle flex rounded-md overflow-hidden border border-gray-300">
+        <div className="flex items-center">
             <button
-                className={`py-1 px-3 text-sm transition-colors ${
-                    unit === 'C' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+                className={`w-10 h-10 rounded-l-lg transition-colors ${
+                    unit === 'C' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'
                 }`}
                 onClick={() => onChange('C')}
+                aria-label="Switch to Celsius"
             >
                 °C
             </button>
             <button
-                className={`py-1 px-3 text-sm transition-colors ${
-                    unit === 'F' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+                className={`w-10 h-10 rounded-r-lg transition-colors ${
+                    unit === 'F' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300'
                 }`}
                 onClick={() => onChange('F')}
+                aria-label="Switch to Fahrenheit"
             >
                 °F
             </button>
