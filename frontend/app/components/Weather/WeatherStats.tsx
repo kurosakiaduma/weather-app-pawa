@@ -9,7 +9,7 @@ interface WeatherStatsProps {
  * Component for displaying weather statistics
  */
 const WeatherStats: React.FC<WeatherStatsProps> = ({ windSpeed, humidity }) => {
-  const roundedHumidity = Math.round(humidity / 5) * 5;
+  const humidityPercentage = `${humidity}%`;
   
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -33,7 +33,7 @@ const WeatherStats: React.FC<WeatherStatsProps> = ({ windSpeed, humidity }) => {
             <div className="humidity-bar">
               <div 
                 className="humidity-fill"
-                data-humidity={roundedHumidity.toString()}
+                style={{ width: humidityPercentage }}
               ></div>
             </div>
             <div className="flex justify-between mt-1 text-xs text-gray-400">
