@@ -26,7 +26,7 @@ const CurrentWeather: React.FC<CurrentWeatherProps> = ({
   unit,
 }) => {
   return (
-    <div className="weather-card flex flex-col items-center justify-center p-6 text-center">
+    <div className="weather-card flex flex-col items-center justify-center p-6 text-center mt-5">
       <WeatherIcon iconCode={iconCode} description={description} size="lg" />
       <h1 className="text-6xl font-bold mt-3 mb-2">{formatTemperature(temperature, unit)}</h1>
       <p className="text-xl capitalize text-gray-300 mb-4">{description}</p>
