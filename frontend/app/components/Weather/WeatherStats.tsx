@@ -96,12 +96,12 @@ const WeatherStats: React.FC<WeatherStatsProps> = ({ windSpeed, humidity, windDe
   
   return (
     <div className="grid grid-cols-2 gap-4">
-      {/* Wind Status Card with Flip Effect */}
+      {/* Wind Status Card */}
       <div className="weather-card flip-card h-64">
         <div className="flip-card-inner">
           {/* Front of card */}
           <div className="flip-card-front p-4 rounded flex flex-col items-center justify-center">
-            <h4 className="text-sm mb-2 flex items-center">
+            <h4 className="text-sm mb-3 flex items-center">
               <Wind className="mr-1 h-4 w-4" />
               Wind Status
             </h4>
@@ -135,35 +135,65 @@ const WeatherStats: React.FC<WeatherStatsProps> = ({ windSpeed, humidity, windDe
                 </div>
                 <span className="text-lg font-medium">{windDirection}</span>
               </div>
-              <p className="text-xs mt-4 text-center text-gray-400">Hover for more info</p>
+              <div className="flex items-center mt-4">
+                <p className="text-xs text-center flex gap-1 items-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  <span>Tap or hover for details</span>
+                </p>
+              </div>
             </div>
           </div>
           
           {/* Back of card with additional info */}
-          <div className="flip-card-back p-4 rounded">
-            <h4 className="text-sm mb-2 flex items-center justify-center">
+          <div className="flip-card-back p-4 rounded flex flex-col">
+            <h4 className="text-sm mb-3 flex items-center justify-center">
               <Compass className="mr-1 h-4 w-4" />
               Wind Details
             </h4>
-            <div className="mt-2">
-              <div className="flex items-center mb-2">
-                {windStatus.severity === 'low' && <CheckCircle className="h-5 w-5 text-green-500 mr-2" />}
-                {windStatus.severity === 'moderate' && <Info className="h-5 w-5 text-yellow-400 mr-2" />}
-                {windStatus.severity === 'high' && <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />}
-                <p className="text-sm font-medium">
-                  {windStatus.severity === 'low' && 'Mild Conditions'}
-                  {windStatus.severity === 'moderate' && 'Moderate Conditions'}
-                  {windStatus.severity === 'high' && 'Strong Winds'}
-                </p>
+            <hr className='w-5 self-center'/>
+            
+            <div className="flex-1 flex flex-col justify-between mt-4">
+              <div>
+                <div className="flex justify-center items-center mt-2">
+                  {windStatus.severity === 'low' && (
+                    <div className="flex items-center">
+                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                      <p className="text-sm font-medium">Mild Conditions</p>
+                    </div>
+                  )}
+                  {windStatus.severity === 'moderate' && (
+                    <div className="flex items-center">
+                      <Info className="h-5 w-5 text-yellow-400 mr-2 flex-shrink-0" />
+                      <p className="text-sm font-medium">Moderate Conditions</p>
+                    </div>
+                  )}
+                  {windStatus.severity === 'high' && (
+                    <div className="flex items-center">
+                      <AlertTriangle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
+                      <p className="text-sm font-medium">Strong Winds</p>
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs leading-tight mt-4">{windStatus.description}</p>
               </div>
-              <p className="text-xs">{windStatus.description}</p>
-              <div className="mt-4">
+              
+              <div className="pt-3 border-t border-gray-700 mt-2">
                 <p className="text-xs font-medium">Direction: {windDirection}</p>
-                <p className="text-xs mt-1">
-                  {windDirection.includes('N') && 'Northerly component'}
-                  {windDirection.includes('S') && 'Southerly component'}
-                  {windDirection.includes('E') && 'Easterly component'}
-                  {windDirection.includes('W') && 'Westerly component'}
+                <p className="text-xs mt-1 leading-tight">
+                  {/* More descriptive wind direction components */}
+                  {windDirection.includes('N') && windDirection.includes('S') ? 
+                  'Variable N-S component' : 
+                  windDirection.includes('N') ? 'From the North' : 
+                  windDirection.includes('S') ? 'From the South' : ''}
+                  
+                  {windDirection.includes('E') && windDirection.includes('W') ? 
+                  ' with variable E-W component' : 
+                  windDirection.includes('E') ? ' with Easterly component' : 
+                  windDirection.includes('W') ? ' with Westerly component' : ''}
                 </p>
               </div>
             </div>
@@ -171,16 +201,16 @@ const WeatherStats: React.FC<WeatherStatsProps> = ({ windSpeed, humidity, windDe
         </div>
       </div>
       
-      {/* Humidity Card with Flip Effect */}
+      {/* Humidity Card */}
       <div className="weather-card flip-card h-64">
         <div className="flip-card-inner">
           {/* Front of card */}
           <div className="flip-card-front p-4 rounded flex flex-col items-center justify-center">
-            <h4 className="text-sm mb-2 flex items-center">
+            <h4 className="text-sm mb-3 flex items-center">
               <Droplets className="mr-1 h-4 w-4" />
               Humidity
             </h4>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full">
               <p className="text-3xl font-medium">{humidity}%</p>
               <div className="w-full mt-4">
                 <div className="w-full rounded-full h-2.5 bg-gray-700">
@@ -200,32 +230,56 @@ const WeatherStats: React.FC<WeatherStatsProps> = ({ windSpeed, humidity, windDe
                   <span>100</span>
                 </div>
               </div>
-              <p className="text-xs mt-4 text-center text-gray-400">Hover for more info</p>
+              <div className="flex items-center mt-4">
+                <p className="text-xs text-center  flex gap-1 items-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  <span>Tap or hover for details</span>
+                </p>
+              </div>
             </div>
           </div>
           
           {/* Back of card with additional info */}
-          <div className="flip-card-back p-4 rounded">
-            <h4 className="text-sm mb-2 flex items-center justify-center">
+          <div className="flip-card-back p-4 rounded flex flex-col">
+            <h4 className="text-sm mb-3 flex items-center justify-center">
               <Droplets className="mr-1 h-4 w-4" />
               Humidity Details
             </h4>
-            <div className="mt-2">
-              <div className="flex items-center mb-2">
-                {humidityStatus.comfort === 'comfortable' && <CheckCircle className="h-5 w-5 text-green-500 mr-2" />}
-                {humidityStatus.comfort === 'moderate' && <Info className="h-5 w-5 text-yellow-400 mr-2" />}
-                {humidityStatus.comfort === 'uncomfortable' && <AlertTriangle className="h-5 w-5 text-red-500 mr-2" />}
-                <p className="text-sm font-medium">
-                  {humidityStatus.comfort === 'comfortable' && 'Comfortable'}
-                  {humidityStatus.comfort === 'moderate' && 'Moderately Comfortable'}
-                  {humidityStatus.comfort === 'uncomfortable' && 'Uncomfortable'}
-                </p>
+            <hr className='w-5 self-center'/>
+
+            
+            <div className="flex-1 flex flex-col justify-between mt-4">
+              <div>
+                <div className="flex justify-center items-center mt-2">
+                  {humidityStatus.comfort === 'comfortable' && (
+                    <div className="flex items-center">
+                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                      <p className="text-sm font-medium">Comfortable</p>
+                    </div>
+                  )}
+                  {humidityStatus.comfort === 'moderate' && (
+                    <div className="flex items-center">
+                      <Info className="h-5 w-5 text-yellow-400 mr-2 flex-shrink-0" />
+                      <p className="text-sm font-medium">Moderately Comfortable</p>
+                    </div>
+                  )}
+                  {humidityStatus.comfort === 'uncomfortable' && (
+                    <div className="flex items-center">
+                      <AlertTriangle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
+                      <p className="text-sm font-medium">Uncomfortable</p>
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs leading-tight mt-4">{humidityStatus.description}</p>
               </div>
-              <p className="text-xs">{humidityStatus.description}</p>
               
-              <div className="mt-4">
+              <div className="pt-3 border-t border-gray-700 mt-3">
                 <p className="text-xs font-medium">Health Impact:</p>
-                <p className="text-xs mt-1">
+                <p className="text-xs mt-1 leading-tight">
                   {humidity < 30 && 'May cause dry skin and respiratory irritation.'}
                   {humidity >= 30 && humidity < 60 && 'Optimal for respiratory health and comfort.'}
                   {humidity >= 60 && humidity < 80 && 'May cause slight discomfort in warm weather.'}
