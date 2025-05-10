@@ -22,7 +22,8 @@ class WeatherService
      */
     public function __construct()
     {
-        $this->apiKey = config('services.openweathermap.key');
+        // $this->apiKey = config('services.openweathermap.key');
+        $this->apiKey = '2fbc03e42518a5af5d6619e3905a43f5';
 
         if (empty($this->apiKey)) {
             Log::error('OpenWeatherMap API key is not set');
@@ -101,63 +102,105 @@ class WeatherService
      * @return array
      */
     public function getWeatherByCoordinates(float $lat, float $lon, string $cityName, string $countryCode): array
-    {
-        try {
-            $url = $this->baseUrl . 'data/3.0/onecall';
-            Log::info("Making Weather API request", [
-                'url' => $url,
-                'lat' => $lat,
-                'lon' => $lon
-            ]);
+{
+    try {
+        // CHANGE THE URL to use the free endpoint
+        $url = $this->baseUrl . 'data/2.5/weather'; // Change from 'data/3.0/onecall'
+        Log::info("Making Weather API request", [
+            'url' => $url,
+            'lat' => $lat,
+            'lon' => $lon
+        ]);
 
-            $response = Http::get($url, [
-                'lat' => $lat,
-                'lon' => $lon,
-                'exclude' => 'minutely,hourly,alerts',
-                'units' => 'metric', // Using metric units (Celsius)
-                'appid' => $this->apiKey,
-            ]);
+        $currentWeatherResponse = Http::get($url, [
+            'lat' => $lat,
+            'lon' => $lon,
+            'units' => 'metric', // Using metric units (Celsius)
+            'appid' => $this->apiKey,
+        ]);
 
-            Log::info("Weather API response received", [
-                'status' => $response->status(),
-                'headers' => $response->headers(),
-            ]);
+        // Get forecast data from free endpoint
+        $forecastUrl = $this->baseUrl . 'data/2.5/forecast';
+        $forecastResponse = Http::get($forecastUrl, [
+            'lat' => $lat,
+            'lon' => $lon,
+            'units' => 'metric',
+            'appid' => $this->apiKey,
+        ]);
 
-            if (!$response->successful()) {
-                Log::error('Failed to get weather data', [
-                    'city' => $cityName,
-                    'lat' => $lat,
-                    'lon' => $lon,
-                    'status' => $response->status(),
-                    'response' => $response->body(),
-                ]);
-                throw new \Exception('Failed to get weather data from OpenWeatherMap');
-            }
-
-            $weatherData = $response->json();
-
-            // Add city and country information to the response
-            $weatherData['city'] = $cityName;
-            $weatherData['country'] = $countryCode;
-
-            Log::info("Weather data processed successfully", [
-                'city' => $cityName,
-                'country' => $countryCode,
-                'temp' => $weatherData['current']['temp'] ?? 'N/A',
-                'weather' => $weatherData['current']['weather'][0]['description'] ?? 'N/A',
-            ]);
-
-            return $weatherData;
-        } catch (\Exception $e) {
-            Log::error('Exception while getting weather data', [
+        if (!$currentWeatherResponse->successful() || !$forecastResponse->successful()) {
+            Log::error('Failed to get weather data', [
                 'city' => $cityName,
                 'lat' => $lat,
                 'lon' => $lon,
-                'exception' => get_class($e),
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'current_status' => $currentWeatherResponse->status(),
+                'current_response' => $currentWeatherResponse->body(),
+                'forecast_status' => $forecastResponse->status(),
+                'forecast_response' => $forecastResponse->body(),
             ]);
-            throw $e;
+            throw new \Exception('Failed to get weather data from OpenWeatherMap');
         }
+
+        $currentData = $currentWeatherResponse->json();
+        $forecastData = $forecastResponse->json();
+
+        // Format the response to match our expected structure
+        $weatherData = [
+            'current' => [
+                'temp' => $currentData['main']['temp'],
+                'humidity' => $currentData['main']['humidity'],
+                'wind_speed' => $currentData['wind']['speed'],
+                'weather' => $currentData['weather'],
+                'dt' => $currentData['dt'],
+            ],
+            'daily' => [],
+            'city' => $cityName,
+            'country' => $countryCode,
+        ];
+
+        // Process forecast data to get daily forecasts (one per day)
+        $processedDays = [];
+        foreach ($forecastData['list'] as $forecast) {
+            // Get the date part only (ignore time)
+            $date = date('Y-m-d', $forecast['dt']);
+
+            // Only take one forecast per day
+            if (!isset($processedDays[$date])) {
+                $processedDays[$date] = true;
+
+                $weatherData['daily'][] = [
+                    'dt' => $forecast['dt'],
+                    'temp' => [
+                        'day' => $forecast['main']['temp'],
+                    ],
+                    'weather' => $forecast['weather'],
+                ];
+
+                // Stop after we have 4 days (including today)
+                if (count($weatherData['daily']) >= 4) {
+                    break;
+                }
+            }
+        }
+
+        Log::info("Weather data processed successfully", [
+            'city' => $cityName,
+            'country' => $countryCode,
+            'temp' => $weatherData['current']['temp'] ?? 'N/A',
+            'weather' => $weatherData['current']['weather'][0]['description'] ?? 'N/A',
+        ]);
+
+        return $weatherData;
+    } catch (\Exception $e) {
+        Log::error('Exception while getting weather data', [
+            'city' => $cityName,
+            'lat' => $lat,
+            'lon' => $lon,
+            'exception' => get_class($e),
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        throw $e;
     }
+}
 }
