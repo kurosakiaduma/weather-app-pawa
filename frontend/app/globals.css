@@ -25,8 +25,8 @@
 
 /* Light mode overrides */
 :root.light-mode {
-  --bg-main: #f0f2f5;
-  --bg-card: #ffffff;
+  --bg-main: #cfd2d6;
+  --bg-card: #d8d2d2;
   --text-main: #333333;
   --text-secondary: #666666;
   --border-color: #e1e4e8;
