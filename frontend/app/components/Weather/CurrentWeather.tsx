@@ -3,6 +3,7 @@ import { MapPin, Calendar, Sunrise, Sunset } from 'lucide-react';
 import WeatherIcon from './WeatherIcon';
 import { formatTemperature } from '../../utils/tempConverter';
 import { formatDate } from '../../utils/dateFormatter';
+import { titleCase } from '../../utils/titleCaseFormatter';
 
 interface CurrentWeatherProps {
   temperature: number;
@@ -70,7 +71,7 @@ const CurrentWeather: React.FC<CurrentWeatherProps> = ({
       {/* Location with pin icon */}
       <div className="flex items-center text-lg font-medium">
         <MapPin className="h-5 w-5 mr-1" />
-        <p>{city}, {country}</p>
+        <p>{titleCase(city)}, {country}</p>
       </div>
       
       {/* Sunrise/Sunset section - only show if provided */}
